@@ -854,13 +854,14 @@ class _ReorderableSliverListState extends State<ReorderableSliverList>
       Widget dragTarget = DragTarget<int>(
         builder: buildDragTarget,
         onWillAccept: (int? toAccept) {
-          widget.onHover?.call(index);
           bool willAccept = _dragStartIndex == toAccept && toAccept != index;
 //          debugPrint('${DateTime.now().toString().substring(5, 22)} reorderable_sliver.dart(679) $this._statefulWrap: '
 //            'onWillAccept: toAccept:$toAccept return:$willAccept _nextIndex:$_nextIndex index:$index _currentIndex:$_currentIndex _dragStartIndex:$_dragStartIndex');
 
           setState(() {
             if (willAccept) {
+              widget.onHover?.call(_dragStartIndex, index);
+
               int shiftedIndex = index;
               if (index == _dragStartIndex) {
                 shiftedIndex = _ghostIndex;
