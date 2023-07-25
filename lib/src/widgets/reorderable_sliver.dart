@@ -246,6 +246,7 @@ class ReorderableSliverList extends StatefulWidget {
     this.onReorderStarted,
     this.onDragStart,
     this.onDragEnd,
+    this.onHover,
     this.enabled = true,
     this.controller,
     Key? key,
@@ -276,6 +277,8 @@ class ReorderableSliverList extends StatefulWidget {
 
   /// Called when the draggable starts being dragged.
   final ReorderStartedCallback? onReorderStarted;
+
+  final HoverCallback? onHover;
 
   final BuildItemsContainer? buildItemsContainer;
   final BuildDraggableFeedback? buildDraggableFeedback;
@@ -851,6 +854,7 @@ class _ReorderableSliverListState extends State<ReorderableSliverList>
       Widget dragTarget = DragTarget<int>(
         builder: buildDragTarget,
         onWillAccept: (int? toAccept) {
+          widget.onHover?.call(index);
           bool willAccept = _dragStartIndex == toAccept && toAccept != index;
 //          debugPrint('${DateTime.now().toString().substring(5, 22)} reorderable_sliver.dart(679) $this._statefulWrap: '
 //            'onWillAccept: toAccept:$toAccept return:$willAccept _nextIndex:$_nextIndex index:$index _currentIndex:$_currentIndex _dragStartIndex:$_dragStartIndex');
