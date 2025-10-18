@@ -250,6 +250,7 @@ class ReorderableSliverList extends StatefulWidget {
     this.onHover,
     this.enabled = true,
     this.controller,
+    this.axis = Axis.vertical,
     Key? key,
   }) : super(key: key);
 
@@ -291,6 +292,11 @@ class ReorderableSliverList extends StatefulWidget {
   final bool enabled;
 
   final ScrollController? controller;
+
+  /// The axis along which the list scrolls and reorders.
+  ///
+  /// Defaults to [Axis.vertical].
+  final Axis axis;
 
   @override
   _ReorderableSliverListState createState() => _ReorderableSliverListState();
@@ -559,17 +565,19 @@ class _ReorderableSliverListState extends State<ReorderableSliverList>
   // Wraps children in Row or Column, so that the children flow in
   // the widget's scrollDirection.
   Widget _buildContainerForMainAxis({required List<Widget> children}) {
-    var column = Column(
+    if (widget.axis == Axis.vertical) {
+      return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: children);
-    return column;
-//    return SingleChildScrollView(
-//      child:column,
-//      primary: false,
-//    );
-
-//    return Column(mainAxisSize: MainAxisSize.min, children: children, mainAxisAlignment: widget.mainAxisAlignment);
+        children: children,
+      );
+    } else {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children,
+      );
+    }
   }
 
   Widget _wrap(Widget toWrap, int index) {
@@ -738,7 +746,7 @@ class _ReorderableSliverListState extends State<ReorderableSliverList>
         child,
         _entranceController,
         _draggingFeedbackSize,
-        Axis.vertical,
+        widget.axis,
       );
     }
 
@@ -747,7 +755,7 @@ class _ReorderableSliverListState extends State<ReorderableSliverList>
         child,
         _ghostController,
         _draggingFeedbackSize,
-        Axis.vertical,
+        widget.axis,
       );
     }
 
@@ -778,8 +786,7 @@ class _ReorderableSliverListState extends State<ReorderableSliverList>
         // constrain the size of the feedback dragging widget.
         child = LongPressDraggable<int>(
           maxSimultaneousDrags: widget.enabled ? 1 : 0,
-          axis: Axis.vertical,
-          //widget.direction,
+          axis: widget.axis,
           data: index,
           //toWrap.key,
           ignoringFeedbackSemantics: false,
