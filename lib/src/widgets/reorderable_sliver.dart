@@ -820,7 +820,10 @@ class _ReorderableSliverListState extends State<ReorderableSliverList>
               ignoring: true,
               child: SizedBox(
                   // Small values (<50) cause an error when used with ListTile.
-                  width: double.infinity,
+                  // Use infinity on cross-axis to fill available space
+                  width: widget.axis == Axis.vertical ? double.infinity : null,
+                  height:
+                      widget.axis == Axis.horizontal ? double.infinity : null,
                   child: Opacity(
                       opacity: 0,
 //              child: _makeAppearingWidget(toWrap)
