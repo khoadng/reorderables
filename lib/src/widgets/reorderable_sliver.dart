@@ -246,6 +246,7 @@ class ReorderableSliverList extends StatefulWidget {
     this.onReorderStarted,
     this.onDragStart,
     this.onDragEnd,
+    this.onDragUpdate,
     this.onHover,
     this.enabled = true,
     this.controller,
@@ -274,6 +275,9 @@ class ReorderableSliverList extends StatefulWidget {
 
   /// Called when the drag process has ended, either via [Draggable.onDraggableCanceled] or [Draggable.onDragCompleted]
   final VoidCallback? onDragEnd;
+
+  /// Called when the draggable is being dragged.
+  final DragUpdateCallback? onDragUpdate;
 
   /// Called when the draggable starts being dragged.
   final ReorderStartedCallback? onReorderStarted;
@@ -825,6 +829,7 @@ class _ReorderableSliverListState extends State<ReorderableSliverList>
           onDraggableCanceled: (Velocity velocity, Offset offset) {
             onDragEnded();
           },
+          onDragUpdate: widget.onDragUpdate,
         );
       }
 
