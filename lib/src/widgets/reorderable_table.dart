@@ -57,6 +57,9 @@ class ReorderableTable extends StatelessWidget {
   /// arguments must not be null.
   ReorderableTable({
     required this.onReorder,
+    this.onDragStart,
+    this.onDragEnd,
+    this.onDragUpdate,
     this.children = const <ReorderableTableRow>[],
     this.columnWidths,
     this.defaultColumnWidth = const FlexColumnWidth(1.0),
@@ -170,6 +173,9 @@ class ReorderableTable extends StatelessWidget {
   /// children.
   final ReorderCallback onReorder;
   final NoReorderCallback? onNoReorder;
+  final VoidCallback? onDragStart;
+  final VoidCallback? onDragEnd;
+  final DragUpdateCallback? onDragUpdate;
   final DecorateDraggableFeedback? decorateDraggableFeedback;
   final Duration? reorderAnimationDuration;
   final Duration? scrollAnimationDuration;
@@ -196,6 +202,9 @@ class ReorderableTable extends StatelessWidget {
         children: children,
         onReorder: onReorder,
         onNoReorder: onNoReorder,
+        onDragStart: onDragStart,
+        onDragEnd: onDragEnd,
+        onDragUpdate: onDragUpdate,
         needsLongPressDraggable: needsLongPressDraggable,
         direction: Axis.vertical,
         buildItemsContainer: (BuildContext containerContext, Axis direction,

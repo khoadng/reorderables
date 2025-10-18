@@ -43,6 +43,9 @@ class ReorderableFlex extends StatefulWidget {
     this.footer,
     required this.children,
     required this.onReorder,
+    required this.onDragStart,
+    required this.onDragEnd,
+    required this.onDragUpdate,
     required this.direction,
     this.scrollDirection = Axis.vertical,
     this.padding,
@@ -97,6 +100,15 @@ class ReorderableFlex extends StatefulWidget {
   /// Called when the draggable starts being dragged.
   final ReorderStartedCallback? onReorderStarted;
 
+  /// Called when a drag process is started
+  final VoidCallback? onDragStart;
+
+  /// Called when the drag process has ended, either via [Draggable.onDraggableCanceled] or [Draggable.onDragCompleted]
+  final VoidCallback? onDragEnd;
+
+  /// Called when the draggable is being dragged.
+  final DragUpdateCallback? onDragUpdate;
+
   final BuildItemsContainer? buildItemsContainer;
   final BuildDraggableFeedback? buildDraggableFeedback;
 
@@ -145,6 +157,9 @@ class _ReorderableFlexState extends State<ReorderableFlex> {
           onReorder: widget.onReorder,
           onNoReorder: widget.onNoReorder,
           onReorderStarted: widget.onReorderStarted,
+          onDragStart: widget.onDragStart,
+          onDragEnd: widget.onDragEnd,
+          onDragUpdate: widget.onDragUpdate,
           padding: widget.padding,
           buildItemsContainer: widget.buildItemsContainer,
           buildDraggableFeedback: widget.buildDraggableFeedback,
@@ -187,6 +202,9 @@ class _ReorderableFlexContent extends StatefulWidget {
     required this.onReorder,
     required this.onNoReorder,
     required this.onReorderStarted,
+    required this.onDragStart,
+    required this.onDragEnd,
+    required this.onDragUpdate,
     required this.mainAxisAlignment,
     required this.scrollController,
     required this.needsLongPressDraggable,
@@ -207,6 +225,9 @@ class _ReorderableFlexContent extends StatefulWidget {
   final ReorderCallback onReorder;
   final NoReorderCallback? onNoReorder;
   final ReorderStartedCallback? onReorderStarted;
+  final VoidCallback? onDragStart;
+  final VoidCallback? onDragEnd;
+  final DragUpdateCallback? onDragUpdate;
   final BuildItemsContainer? buildItemsContainer;
   final BuildDraggableFeedback? buildDraggableFeedback;
   final ScrollController? scrollController;
@@ -446,6 +467,7 @@ class _ReorderableFlexContentState extends State<_ReorderableFlexContent>
 
     // Starts dragging toWrap.
     void onDragStarted() {
+      widget.onDragStart?.call();
       setState(() {
         _draggingWidget = draggedItem;
         _dragStartIndex = index;
@@ -481,6 +503,7 @@ class _ReorderableFlexContentState extends State<_ReorderableFlexContent>
     // Drops toWrap into the last position it was hovering over.
     void onDragEnded() {
 //      reorder(_dragStartIndex, _currentIndex);
+      widget.onDragEnd?.call();
       setState(() {
         _reorder(_dragStartIndex, _currentIndex);
         _dragStartIndex = -1;
@@ -648,6 +671,7 @@ class _ReorderableFlexContentState extends State<_ReorderableFlexContent>
                 // had been dragged to.
                 onDraggableCanceled: (Velocity velocity, Offset offset) =>
                     onDragEnded(),
+                onDragUpdate: widget.onDragUpdate,
               )
             : Draggable<int>(
                 maxSimultaneousDrags: 1,
@@ -675,6 +699,7 @@ class _ReorderableFlexContentState extends State<_ReorderableFlexContent>
                 // had been dragged to.
                 onDraggableCanceled: (Velocity velocity, Offset offset) =>
                     onDragEnded(),
+                onDragUpdate: widget.onDragUpdate,
               );
       }
 
@@ -969,6 +994,9 @@ class _ReorderableFlexContentState extends State<_ReorderableFlexContent>
 class ReorderableRow extends ReorderableFlex {
   ReorderableRow({
     required ReorderCallback onReorder,
+    VoidCallback? onDragStarted,
+    VoidCallback? onDragEnded,
+    DragUpdateCallback? onDragUpdate,
     Key? key,
     Widget? header,
     Widget? footer,
@@ -996,6 +1024,9 @@ class ReorderableRow extends ReorderableFlex {
             footer: footer,
             children: children,
             onReorder: onReorder,
+            onDragEnd: onDragEnded,
+            onDragStart: onDragStarted,
+            onDragUpdate: onDragUpdate,
             onNoReorder: onNoReorder,
             onReorderStarted: onReorderStarted,
             direction: Axis.horizontal,
@@ -1052,6 +1083,9 @@ class ReorderableRow extends ReorderableFlex {
 class ReorderableColumn extends ReorderableFlex {
   ReorderableColumn({
     required ReorderCallback onReorder,
+    VoidCallback? onDragStarted,
+    VoidCallback? onDragEnded,
+    DragUpdateCallback? onDragUpdate,
     Key? key,
     Widget? header,
     Widget? footer,
@@ -1080,6 +1114,9 @@ class ReorderableColumn extends ReorderableFlex {
             children: children,
             onReorder: onReorder,
             onNoReorder: onNoReorder,
+            onDragEnd: onDragEnded,
+            onDragStart: onDragStarted,
+            onDragUpdate: onDragUpdate,
             onReorderStarted: onReorderStarted,
             direction: Axis.vertical,
             padding: padding,
