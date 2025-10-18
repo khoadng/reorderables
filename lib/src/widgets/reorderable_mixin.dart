@@ -26,18 +26,22 @@ mixin ReorderableMixin {
         child: FadeTransition(opacity: entranceController, child: child),
       );
 
-      BoxConstraints contentSizeConstraints = BoxConstraints.loose(draggingFeedbackSize);
-      return ConstrainedBox(constraints: contentSizeConstraints, child: transition);
+      // Only constrain the cross-axis to avoid infinite constraints in Row/Column
+      BoxConstraints contentSizeConstraints = direction == Axis.vertical
+          ? BoxConstraints(maxWidth: draggingFeedbackSize.width)
+          : BoxConstraints(maxHeight: draggingFeedbackSize.height);
+      return ConstrainedBox(
+          constraints: contentSizeConstraints, child: transition);
     }
   }
 
   @protected
   Widget makeDisappearingWidget(
-      Widget child,
-      AnimationController ghostController,
-      Size? draggingFeedbackSize,
-      Axis direction,
-      ) {
+    Widget child,
+    AnimationController ghostController,
+    Size? draggingFeedbackSize,
+    Axis direction,
+  ) {
     if (null == draggingFeedbackSize) {
       return SizeTransitionWithIntrinsicSize(
         sizeFactor: ghostController,
@@ -54,8 +58,10 @@ mixin ReorderableMixin {
         child: FadeTransition(opacity: ghostController, child: child),
       );
 
-      BoxConstraints contentSizeConstraints =
-      BoxConstraints.loose(draggingFeedbackSize);
+      // Only constrain the cross-axis to avoid infinite constraints in Row/Column
+      BoxConstraints contentSizeConstraints = direction == Axis.vertical
+          ? BoxConstraints(maxWidth: draggingFeedbackSize.width)
+          : BoxConstraints(maxHeight: draggingFeedbackSize.height);
       return ConstrainedBox(
           constraints: contentSizeConstraints, child: transition);
     }
